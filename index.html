@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#14532d"><title>Chatarpur Nayak</title>
+<style>
+:root{--g:#14532d;--bg:#f4f7f4;--line:#dbe5dc;--ink:#17251b}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,-apple-system,sans-serif}
+header{background:var(--g);color:#fff;padding:22px 18px}header h1{margin:0;font-size:25px}header p{margin:5px 0 0}
+main{max-width:760px;margin:auto;padding:14px}.tabs{display:flex;gap:7px;overflow:auto;padding:4px 0 12px}
+button{border:0;border-radius:10px;padding:11px 14px;background:var(--g);color:white;font-weight:650;font-size:14px;cursor:pointer}
+.tabs button{background:#e2eee4;color:var(--g);white-space:nowrap}.tabs button.active{background:var(--g);color:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:10px 0}
+h2{font-size:19px;margin:0 0 12px}label{display:block;font-weight:650;margin:11px 0 5px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #cbd8ce;border-radius:9px;font:inherit;background:white}
+textarea{min-height:90px}.wide{width:100%;margin-top:12px}.muted{color:#647168;font-size:13px}
+.notice{background:#fff8df;border:1px solid #f0df9e;border-radius:10px;padding:11px;font-size:13px}
+.item{border-top:1px solid var(--line);padding:13px 0}.item:first-child{border:0}
+.pill{display:inline-block;background:#e8f2ea;color:var(--g);border-radius:99px;padding:4px 9px;font-size:12px;font-weight:700}
+.photo{width:78px;height:78px;object-fit:cover;border-radius:12px;background:#edf2ee}.row{display:flex;gap:12px;align-items:center}
+.hidden{display:none}.empty{text-align:center;color:#68756c;padding:18px}.danger{background:#8b2419}
+footer{text-align:center;color:#68756c;font-size:12px;padding:20px}
+</style></head>
+<body>
+<header><h1>Chatarpur Nayak</h1><p>गाँव की जानकारी और जन-शिकायत मंच</p></header>
+<main>
+<nav class="tabs">
+<button class="active" data-tab="home">होम</button><button data-tab="complaints">शिकायतें</button>
+<button data-tab="newComplaint">शिकायत दर्ज करें</button><button data-tab="candidates">प्रधान प्रत्याशी</button>
+<button data-tab="newCandidate">प्रत्याशी जोड़ें</button><button data-tab="admin">Admin</button>
+</nav>
+<section id="home" class="panel"><div class="card"><h2>Chatarpur Nayak में आपका स्वागत है</h2>
+<p>यह गाँव की शिकायतों और ग्राम प्रधान प्रत्याशियों की जानकारी साझा करने का मंच है।</p>
+<div class="notice">ऑनलाइन संस्करण: डेटा Firebase में सेव होगा। शिकायतकर्ता का मोबाइल नंबर सार्वजनिक सूची में नहीं दिखेगा।</div></div>
+<div class="card"><h2>सुविधाएँ</h2><p>✓ शिकायत दर्ज करें और उसका स्टेटस देखें</p><p>✓ प्रत्याशी का नाम, फोटो और नंबर भेजें</p><p>✓ Admin की मंज़ूरी के बाद प्रत्याशी प्रकाशित हों</p></div></section>
+<section id="complaints" class="panel hidden"><div class="card"><h2>सभी शिकायतें</h2><div id="complaintList" class="muted">लोड हो रहा है…</div></div></section>
+<section id="newComplaint" class="panel hidden"><div class="card"><h2>नई शिकायत दर्ज करें</h2>
+<form id="complaintForm"><label>आपका नाम (वैकल्पिक)</label><input name="person" maxlength="60">
+<label>मोबाइल नंबर (वैकल्पिक; सार्वजनिक नहीं होगा)</label><input name="phone" inputmode="tel" maxlength="15">
+<label>शिकायत का विषय</label><input name="subject" required maxlength="100">
+<label>शिकायत का विवरण</label><textarea name="details" required maxlength="1200"></textarea>
+<button class="wide">शिकायत जमा करें</button></form><p class="muted">आपका मोबाइल नंबर सार्वजनिक शिकायत सूची में नहीं दिखेगा।</p></div></section>
+<section id="candidates" class="panel hidden"><div class="card"><h2>मंज़ूर ग्राम प्रधान प्रत्याशी</h2><div id="candidateList" class="muted">लोड हो रहा है…</div></div></section>
+<section id="newCandidate" class="panel hidden"><div class="card"><h2>प्रत्याशी की जानकारी भेजें</h2>
+<form id="candidateForm"><label>प्रत्याशी का नाम</label><input name="name" required maxlength="80">
+<label>मोबाइल नंबर</label><input name="phone" required inputmode="tel" maxlength="15">
+<label>फोटो</label><input name="photo" type="file" accept="image/*" required>
+<button class="wide">मंज़ूरी के लिए भेजें</button></form>
+<p class="muted">जानकारी Admin की मंज़ूरी के बाद सार्वजनिक होगी। कृपया प्रत्याशी की सहमति से ही उनका नंबर और फोटो भेजें।</p></div></section>
+<section id="admin" class="panel hidden"><div class="card"><h2>Admin Login</h2>
+<div class="notice">Admin के लिए Firebase Email/Password login चालू होना और सुरक्षा नियमों में Admin UID सेट होना ज़रूरी है।</div>
+<form id="loginForm"><label>Admin email</label><input name="email" type="email" required>
+<label>Password</label><input name="password" type="password" required>
+<button class="wide">Login</button></form>
+<div id="adminArea" class="hidden"><p id="adminWho" class="muted"></p><button id="logout" class="danger">Logout</button>
+<h3>प्रत्याशी मंज़ूरी</h3><div id="pendingList"></div><h3>शिकायतों का स्टेटस</h3><div id="adminComplaints"></div></div></div></section>
+<footer>Chatarpur Nayak • Online prototype</footer>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { firebaseConfig } from "./firebase-config.js";
+const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app), storage=getStorage(app);
+const $=s=>document.querySelector(s), esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let currentUser=null, complaints=[], candidates=[];
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("hidden",x.id!==b.dataset.tab));refresh()});
+function msg(s){alert(s)}
+async function refresh(){
+ try{
+  const cq=query(collection(db,"complaints"),orderBy("createdAt","desc")); const cs=await getDocs(cq);
+  complaints=cs.docs.map(d=>({id:d.id,...d.data()}));
+  $("#complaintList").innerHTML=complaints.length?complaints.map(c=>`<div class="item"><b>${esc(c.subject)}</b><p>${esc(c.details)}</p><span class="pill">${esc(c.status||"नई")}</span><p class="muted">दर्जकर्ता: ${esc(c.person||"नाम नहीं दिया")} • ${c.createdAt?.toDate?.().toLocaleDateString("hi-IN")||"अभी"}</p></div>`).join(""):'<div class="empty">अभी कोई शिकायत नहीं है।</div>';
+  const qy=query(collection(db,"candidates"),where("status","==","approved"));
+  const ca=await getDocs(qy); candidates=ca.docs.map(d=>({id:d.id,...d.data()}));
+  $("#candidateList").innerHTML=candidates.length?candidates.map(c=>`<div class="item row">${c.photoUrl?`<img class="photo" src="${esc(c.photoUrl)}" alt="प्रत्याशी फोटो">`:'<div class="photo"></div>'}<div><b>${esc(c.name)}</b><p>${esc(c.phone)}</p></div></div>`).join(""):'<div class="empty">अभी कोई मंज़ूर प्रत्याशी नहीं है।</div>';
+  if(currentUser) await renderAdmin();
+ }catch(e){console.error(e);$("#complaintList").textContent="डेटा लोड नहीं हुआ: "+e.message;$("#candidateList").textContent="डेटा लोड नहीं हुआ। Firebase Rules और Database setup जाँचें।"}
+}
+$("#complaintForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{
+ const refDoc=await addDoc(collection(db,"complaints"),{person:f.get("person").trim(),subject:f.get("subject").trim(),details:f.get("details").trim(),status:"नई",createdAt:serverTimestamp()});
+ const phone=f.get("phone").trim(); if(phone) await addDoc(collection(db,"privateComplaintContacts"),{complaintId:refDoc.id,phone,createdAt:serverTimestamp()});
+ e.target.reset();msg("शिकायत जमा हो गई।");document.querySelector('[data-tab="complaints"]').click();
+ }catch(err){msg("शिकायत जमा नहीं हुई: "+err.message)}};
+$("#candidateForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),file=f.get("photo");
+ if(!file||file.size>2*1024*1024){msg("2 MB से छोटी फोटो चुनें।");return}
+ try{const path="candidate-photos/"+crypto.randomUUID()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"_");const sr=ref(storage,path);
+ await uploadBytes(sr,file,{contentType:file.type});const photoUrl=await getDownloadURL(sr);
+ await addDoc(collection(db,"candidates"),{name:f.get("name").trim(),phone:f.get("phone").trim(),photoUrl,status:"pending",createdAt:serverTimestamp()});
+ e.target.reset();msg("जानकारी मंज़ूरी के लिए भेज दी गई।");document.querySelector('[data-tab="candidates"]').click();
+ }catch(err){msg("जानकारी जमा नहीं हुई: "+err.message)}};
+$("#loginForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await signInWithEmailAndPassword(auth,f.get("email"),f.get("password"));msg("Login सफल।")}catch(err){msg("Login नहीं हुआ: "+err.message)}};
+$("#logout").onclick=()=>signOut(auth);
+onAuthStateChanged(auth,u=>{currentUser=u;$("#adminArea").classList.toggle("hidden",!u);$("#loginForm").classList.toggle("hidden",!!u);$("#adminWho").textContent=u?"Login: "+u.email:"";if(u)renderAdmin()});
+async function renderAdmin(){
+ try{
+ const qy=query(collection(db,"candidates"),where("status","==","pending"));const p=await getDocs(qy);
+ $("#pendingList").innerHTML=p.docs.length?p.docs.map(d=>{let c=d.data();return `<div class="item"><b>${esc(c.name)}</b> • ${esc(c.phone)}<div class="row">${c.photoUrl?`<img class="photo" src="${esc(c.photoUrl)}">`:""}<button data-approve="${d.id}">मंज़ूर करें</button><button class="danger" data-reject="${d.id}">अस्वीकार</button></div></div>`}).join(""):'<p class="muted">कोई pending प्रत्याशी नहीं।</p>';
+ $("#adminComplaints").innerHTML=complaints.length?complaints.map(c=>`<div class="item"><b>${esc(c.subject)}</b><label>स्थिति बदलें</label><select data-status="${c.id}">${["नई","जाँच में","कार्रवाई जारी","हल हो गई"].map(s=>`<option ${c.status===s?"selected":""}>${s}</option>`).join("")}</select></div>`).join(""):'<p class="muted">कोई शिकायत नहीं।</p>';
+ document.querySelectorAll("[data-approve]").forEach(b=>b.onclick=()=>updateDoc(doc(db,"candidates",b.dataset.approve),{status:"approved"}).then(refresh).catch(e=>msg(e.message)));
+ document.querySelectorAll("[data-reject]").forEach(b=>b.onclick=()=>updateDoc(doc(db,"candidates",b.dataset.reject),{status:"rejected"}).then(refresh).catch(e=>msg(e.message)));
+ document.querySelectorAll("[data-status]").forEach(s=>s.onchange=()=>updateDoc(doc(db,"complaints",s.dataset.status),{status:s.value}).then(refresh).catch(e=>msg(e.message)));
+ }catch(e){$("#pendingList").textContent="Admin डेटा नहीं खुला। Security Rules में Admin UID जाँचें: "+e.message}
+}
+refresh();
+</script></body></html>

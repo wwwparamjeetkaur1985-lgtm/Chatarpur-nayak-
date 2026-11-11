@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      // Replace this with the Firebase Authentication UID of the app owner.
+      return request.auth != null && request.auth.uid == "PASTE_ADMIN_UID_HERE";
+    }
+    match /complaints/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['person','subject','details','status','createdAt'])
+        && request.resource.data.subject is string
+        && request.resource.data.subject.size() > 0
+        && request.resource.data.details is string
+        && request.resource.data.details.size() > 0
+        && request.resource.data.status == 'नई';
+      allow update, delete: if isAdmin();
+    }
+    match /privateComplaintContacts/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['complaintId','phone','createdAt'])
+        && request.resource.data.phone is string;
+      allow read, update, delete: if isAdmin();
+    }
+    match /candidates/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['name','phone','photoUrl','status','createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.phone is string
+        && request.resource.data.photoUrl is string
+        && request.resource.data.status == 'pending';
+      allow read: if resource.data.status == 'approved' || isAdmin();
+      allow update, delete: if isAdmin();
+    }
+  }
+}
